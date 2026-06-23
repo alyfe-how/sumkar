@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>Your AI re-reads the same files over and over. Sumkar makes it read them once.</b><br>
-  <i>A context-virtualization engine: compress a file to a navigable index once, then serve that index on every read — forever.</i><br>
+  <i>A context-virtualization engine: compress a file to a navigable index once, then serve that index on every read — across sessions.</i><br>
   <sub>Powered by <b>Herald</b>, the context engine from ESMC.</sub>
 </p>
 
@@ -43,6 +43,9 @@ same model (Haiku), same prompt — one **with** Sumkar, one **without**. Then w
 file-ingestion tokens from each session's own transcript. No screenshots to trust — a
 protocol anyone can replay:
 
+*(The index in this benchmark was built by **local Ollama running `qwen3-coder:30b`**;
+results may vary slightly by compression backend — see [benchmarks/RESULTS.md](benchmarks/RESULTS.md).)*
+
 | Read (─ `/clear` between each ─) | **Without Sumkar** | **With Sumkar** | |
 |---|---:|---:|---|
 | Read 1 | 25,157 (raw file) | 15,028 *(builds index, cold)* | |
@@ -56,14 +59,11 @@ The control **re-pays the full file every read**. Sumkar builds the index **once
 cold) and serves it from disk the other four times — *even though context was cleared between
 each.* That's the whole thesis, visible in the curve: control climbs linearly, Sumkar flat.
 
-**And the index survives across cold sessions** — proven by toggle, not asserted:
-
-| Cold read, index **on disk** | Cold read, index **deleted** |
-|---:|---:|
-| **1 ms** (loaded from `.herald/cache/`) | **56,800 ms** (rebuilt from scratch) |
-
-A 56,800× gap that's *only* explainable by disk persistence: present → instant, deleted →
-rebuild. *Build once, serve forever.* Full protocol table, per-bucket breakdown, and the
+**The index persists to disk and is reused across sessions.** Once built, the `[Lxx]`
+index is cached to `.herald/cache/` and `mtime`-validated, so a later session loads it from
+disk instead of rebuilding — the build cost (read 1) is paid once, not once per session.
+(The per-read token saving above is fully measured; per-session token measurement of the
+cross-session case is in progress.) Full protocol table, per-bucket breakdown, and the
 honest caveats (why raw-total moves only 10%, why read 1 is the build):
 **[benchmarks/RESULTS.md](benchmarks/RESULTS.md).**
 
@@ -87,7 +87,7 @@ honest caveats (why raw-total moves only 10%, why read 1 is the build):
               └─────────────────┬─────────────────┘
                                 ▼
         the model gets a small index, not the raw file
-        → ~40% fewer tokens, on every read, forever
+        → ~40% fewer tokens, on every read, across sessions
 ```
 
 1. **LOCATE** — compress a large file into a navigable `[Lxx]` index (summary + key findings
@@ -131,8 +131,8 @@ on top of** — and it's the only one with a real engine under the skill.
 ./install.sh /path/to/your-project
 ```
 
-That copies the engine into `your-project/.herald/` and wires the read-hook into
-`your-project/.claude/settings.json`. Full walkthrough: **[GETTING-STARTED.md](GETTING-STARTED.md).**
+That copies the engine into `your-project/.herald/` (Sumkar's engine cache) and wires the
+read-hook into `your-project/.claude/settings.json`. Full walkthrough: **[GETTING-STARTED.md](GETTING-STARTED.md).**
 
 ### Compression backend (for building the index)
 

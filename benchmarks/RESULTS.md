@@ -7,19 +7,19 @@
 
 ## TL;DR
 
-- **~40% fewer file-ingestion tokens per read** on a large file, same model, same prompt.
+- **~40% fewer file-ingestion tokens per read** on a large file, same model, same prompt —
+  **fully measured** (5-read marathon).
 - The index is **built once** (cold, ~1 min on a local model), **persisted to disk**, and
-  **served on every subsequent read — including in brand-new, genuinely cold sessions** —
-  until the source file changes.
-- Both halves are measured: the 40% from a 5-read marathon; the "persists across sessions"
-  from a disk-toggle test (index present vs deleted).
+  **reused across sessions** (a later cold session loads it from disk instead of rebuilding)
+  — until the source file changes. The *disk-persistence mechanism* is shown by a toggle
+  test; a clean cross-session **token** measurement is still in progress.
 
 ## The mechanism (so the numbers make sense)
 
 Sumkar compresses a large file into a small navigable `[Lxx]` index **once**, writes that
 index to `.herald/cache/<md5-of-path>.json`, and on every later read serves the index
 instead of the raw file. The index is `mtime`-validated: if the source file changes, Sumkar
-rebuilds; otherwise it reuses the on-disk index forever. **The savings come from the model
+rebuilds; otherwise it reuses the on-disk index across sessions. **The savings come from the model
 ingesting a ~15k-token index instead of a ~25k-token raw file — every read.**
 
 ---
@@ -114,7 +114,7 @@ pricing), which is the honest "effective cost" framing.
 
 ---
 
-## Result 2 — Disk persistence ("build once, serve forever"), proven by toggle
+## Result 2 — The index is a real on-disk file, reused across sessions (mechanism proof)
 
 The savings % alone **cannot** prove persistence — a tool that rebuilds the index every
 session would *also* show ~40%. The discriminating signal is the **build cost on first
@@ -126,14 +126,19 @@ prompt cache to contaminate the result):
 | **A** | ✅ present | **`cache_hit` in 1 ms** | none | index **loaded from disk** |
 | **B** | ❌ deleted | **`compressed` in 56.8 s** | full Ollama rebuild | index **had to be rebuilt** |
 
-**1 ms vs 56,800 ms = a 56,800× contrast.** This is only explainable by disk persistence:
-index present → cheap (loaded); index deleted → expensive (rebuilt). Deleting the on-disk
+These are **latency** numbers, not token numbers — they answer one question only: *is the
+index a real file that a fresh process reuses, or does it rebuild every time?* Index
+present → loaded instantly (no rebuild); index deleted → full rebuild. Deleting the on-disk
 index makes the first read expensive again — which proves the savings were coming from the
 persisted index, not from any ephemeral cache.
 
-**Verdict:** the index is a real file (`.herald/cache/<md5>.json`), `mtime`-validated,
-reused by any future cold session until the source file changes. "Build once, serve forever
-across sessions" is **earned**, not asserted.
+**Verdict:** the index is a real file (`.herald/cache/<md5>.json`), `mtime`-validated, and
+reused by a fresh process until the source file changes — so a later session loads it from
+disk instead of rebuilding. That **mechanism** (disk persistence + reuse) is proven here.
+The *per-read token saving* is fully measured in Result 1; a clean **token** measurement of
+a brand-new cold session loading the on-disk index is still in progress — so we claim
+"reused across sessions" (proven), not a specific cross-session token percentage (not yet
+measured).
 
 ---
 
@@ -143,7 +148,8 @@ across sessions" is **earned**, not asserted.
 |---|---|
 | ~40% fewer file-ingestion tokens per read | ✅ Measured (marathon) |
 | Index builds once cold, serves cheap thereafter | ✅ Measured (read 1 vs reads 2–5) |
-| Index persists to disk across cold sessions | ✅ Measured (toggle: 1 ms vs 56.8 s) |
+| Index file persists & is reused across cold sessions (mechanism) | ✅ Shown (disk-toggle, latency) |
+| Cross-session *token* saving (specific %) | ⏳ In progress — only the per-read token number is fully measured |
 | Rebuilds only when the source file changes | ✅ `mtime`-validated in code (`src/cache.js`) |
 | Beats a *frontier* model that already self-limits on huge files | ❌ Not claimed — a smart model (e.g. Opus) often greps/offset-reads big files itself; Sumkar's win is largest on cheaper models and on every guaranteed re-read |
 
