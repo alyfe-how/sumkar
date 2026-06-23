@@ -1,0 +1,10 @@
+{
+  "name": "@herald/adapter-anthropic",
+  "version": "0.1.0",
+  "description": "Default Herald compression adapter — Anthropic Claude Sonnet 4.6. The only package that imports the Anthropic SDK; keeps herald-core model-agnostic.",
+  "main": "index.js",
+  "peerDependencies": {
+    "@anthropic-ai/sdk": ">=0.40.0"
+  },
+  "license": "MIT"
+}

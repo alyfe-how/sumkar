@@ -1,0 +1,12 @@
+{
+  "name": "sumkar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sumkar — powered by Herald, the context engine from ESMC. A model-agnostic context-virtualization engine with per-host enforcement adapters: compress a file to a navigable index once, serve it on every read.",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "test": "node packages/herald-core/test/smoke.test.js && node packages/herald-core/test/ladder.test.js",
+    "bench": "node benchmarks/three-arm.js"
+  },
+  "license": "MIT"
+}

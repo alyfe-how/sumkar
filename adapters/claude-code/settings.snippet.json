@@ -1,0 +1,17 @@
+{
+  "_comment": "Merge this into your project's .claude/settings.json to enable Herald enforcement on Claude Code. The 300s timeout covers cold compression on a slow local model; lower it if you wire a fast hosted model.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/adapters/claude-code/herald-gate.js\"",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}

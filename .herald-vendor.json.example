@@ -1,0 +1,17 @@
+{
+  "_comment": "Copy to .herald-vendor.json to change the compression model. ABSENT = Anthropic Sonnet 4.6 default (just works). Mirrors ESMC's .esmc-vendor-config.json. herald-core never changes when you swap vendors — it only ever sees a complete() function.",
+
+  "_default_is": "anthropic / claude-sonnet-4-6 — no file needed for this",
+
+  "compress": {
+    "vendor": "anthropic",
+    "model": "claude-sonnet-4-6",
+    "api_key_env": "ANTHROPIC_API_KEY"
+  },
+
+  "_examples": {
+    "cheap_two_tier": { "vendor": "anthropic", "model": "claude-haiku-4-5", "api_key_env": "ANTHROPIC_API_KEY" },
+    "free_local":     { "vendor": "ollama",    "model": "qwen3-coder:30b",  "base_url": "http://localhost:11434" },
+    "openai":         { "vendor": "openai",    "model": "gpt-4o-mini",      "api_key_env": "OPENAI_API_KEY" }
+  }
+}

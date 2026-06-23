@@ -1,0 +1,7 @@
+{
+  "name": "@herald/adapter-ollama",
+  "version": "0.1.0",
+  "description": "Free/local Herald compression adapter — Ollama over HTTP. Zero API cost, zero SDK dependency (Node 18+ fetch).",
+  "main": "index.js",
+  "license": "MIT"
+}

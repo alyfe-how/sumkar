@@ -1,0 +1,12 @@
+{
+  "name": "@herald/core",
+  "version": "0.1.0",
+  "description": "Model-agnostic context-virtualization engine: compress files to a navigable [Lxx] index, then surgically re-read only what a task needs. Zero runtime dependencies.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node test/smoke.test.js"
+  },
+  "keywords": ["llm", "tokens", "context", "compression", "agent", "claude", "herald"],
+  "license": "MIT",
+  "dependencies": {}
+}

@@ -1,0 +1,36 @@
+# ── Herald-Portable .gitignore ──────────────────────────────────────────────
+# Belt-and-suspenders: nothing private, no secrets, no benchmark fixtures ship.
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Herald runtime artifacts (per-user cache + local config)
+.herald/
+.herald/cache/
+.herald-vendor.json          # the REAL config (may name a key env-var); only the .example ships
+.herald-prewarm-result.json
+.herald-session-init
+
+# Secrets / keys — never commit
+.env
+.env.*
+*.key
+*.pem
+**/secrets/**
+
+# Benchmark fixtures & IP guard — never ship private source files
+*.mq5
+candle*
+*-demo/
+herald-demo/
+non-herald-demo/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
