@@ -1,4 +1,6 @@
-<h1 align="center">🔭 Sumkar</h1>
+<p align="center">
+  <img src="Source/logo/sumkar-lockup-esmc-light-500.png" alt="Sumkar" width="240">
+</p>
 
 <p align="center">
   <b>Your AI re-reads the same files over and over. Sumkar makes it read them once.</b><br>

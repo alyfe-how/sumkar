@@ -1,0 +1,13 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="sumkar">
+  <title>sumkar</title>
+  <rect x="0" y="0" width="500" height="500" rx="48" fill="#22323F"/>
+  <g transform="translate(-110,14.8) scale(2.4)"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="8.5">
+    <path d="M150,34 C146,46 140,58 116,70" stroke="#FFFFFF"/>
+    <path d="M150,34 C154,46 160,58 184,70" stroke="#FFFFFF"/>
+    <line x1="96" y1="86" x2="204" y2="86" stroke="#FFFFFF"/>
+    <line x1="108" y1="106" x2="192" y2="106" stroke="#25BDB0"/>
+    <line x1="120" y1="126" x2="180" y2="126" stroke="#25BDB0"/>
+    <line x1="132" y1="146" x2="168" y2="146" stroke="#25BDB0"/>
+    <line x1="142" y1="166" x2="158" y2="166" stroke="#FFFFFF"/>
+  </g></g>
+</svg>
